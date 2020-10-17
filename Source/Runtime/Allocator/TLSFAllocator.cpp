@@ -51,7 +51,7 @@ int32 TLSFAllocator::GetPoolCount()
 void* TLSFAllocator::MallocBlock()
 {
 	void* block = malloc(TLSF_Pool_Size);
-	Assert(block);
+	Assert(block && m_PoolNum < TLSF_Pool_Count);
 
 	m_Pools[m_PoolNum] = block;
 	m_PoolNum += 1;
@@ -99,7 +99,7 @@ uint8* TLSFAllocator::Allocate(uint32 reqSize, int32 align, AllocatorType type, 
 	return (uint8*)mem + sizeof(MemorySalt);
 }
 
-uint8* TLSFAllocator::Reallocate(uint8* p, uint32 reqSize, AllocatorType type, int32 align, const char* file, int32 line)
+uint8* TLSFAllocator::Reallocate(uint8* p, uint32 reqSize, int32 align, AllocatorType type, const char* file, int32 line)
 {
 	const MemorySalt* temp = GetMemorySalt(p);
 	Assert(temp);
@@ -113,6 +113,11 @@ uint8* TLSFAllocator::Reallocate(uint8* p, uint32 reqSize, AllocatorType type, i
 
 	uint32 realSize = AlignUp(reqSize + sizeof(MemorySalt), align);
 	void* mem = tlsf_realloc(m_Tlsf, (void*)temp, realSize);
+	if (!mem)
+	{
+		tlsf_add_pool(m_Tlsf, MallocBlock(), TLSF_Pool_Size);
+		mem = tlsf_realloc(m_Tlsf, (void*)temp, realSize);
+	}
 
 	MemorySalt* salt = (MemorySalt*)mem;
 	salt->Fill(realSize, type, this, file, line);
@@ -134,6 +139,9 @@ bool TLSFAllocator::Deallocate(uint8* p)
 	{
 		return false;
 	}
+
+	m_NumAllocations      -= 1;
+	m_TotalAllocatedBytes -= salt->size;
 
 #if ENABLE_MEM_PROFILER
 	GetMemoryProfiler()->UnRegisterAllocation(salt);

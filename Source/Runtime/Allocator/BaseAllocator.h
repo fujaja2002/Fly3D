@@ -20,7 +20,7 @@ public:
 
 	virtual uint8* Allocate(uint32 size, int32 align, AllocatorType type, const char* file, int32 line) = 0;
 
-	virtual uint8* Reallocate(uint8* p, uint32 size, AllocatorType type, int32 align, const char* file, int32 line) = 0;
+	virtual uint8* Reallocate(uint8* p, uint32 size, int32 align, AllocatorType type, const char* file, int32 line) = 0;
 
 	virtual bool Deallocate(uint8* p) = 0;
 

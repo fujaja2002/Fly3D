@@ -1,4 +1,5 @@
 ﻿#include "Runtime/Profiler/MemoryProfiler.h"
+#include "Runtime/Log/Assert.h"
 
 #if ENABLE_MEM_PROFILER
 
@@ -22,6 +23,11 @@ MemoryProfiler::~MemoryProfiler()
 
 const MemorySalt* MemoryProfiler::GetMemorySalt(const uint8* ptr)
 {
+	if (ptr == nullptr)
+	{
+		return nullptr;
+	}
+
 	const MemorySalt* salt = (const MemorySalt*)(ptr - MemorySaltSize());
 
 	if (m_Salts.find(salt) != m_Salts.end())
@@ -51,6 +57,8 @@ uint32 MemoryProfiler::GetAllocatedMemorySize()
 
 bool MemoryProfiler::RegisterAllocation(const MemorySalt* salt)
 {
+	Assert(salt);
+
 	if (m_Salts.find(salt) != m_Salts.end())
 	{
 		return false;
@@ -63,6 +71,8 @@ bool MemoryProfiler::RegisterAllocation(const MemorySalt* salt)
 
 bool MemoryProfiler::UnRegisterAllocation(const MemorySalt* salt)
 {
+	Assert(salt);
+
 	auto it = m_Salts.find(salt);
 
 	if (it == m_Salts.end())
