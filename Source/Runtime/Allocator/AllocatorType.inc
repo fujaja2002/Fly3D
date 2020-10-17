@@ -1,0 +1,2 @@
+SetAllocatorTypeName(Temp)
+SetAllocatorTypeName(Regular)

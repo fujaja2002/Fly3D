@@ -15,7 +15,7 @@ elseif (UNIX)
 endif ()
 
 include_directories(
-	Source/Runtime/
+	Source/
 )
 
 add_subdirectory(Source)
