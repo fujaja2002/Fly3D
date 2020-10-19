@@ -7,7 +7,7 @@
 
 #include <unordered_set>
 
-struct MemoryProfiler;
+class MemoryProfiler;
 struct MemorySalt;
 
 struct MemorySalt
