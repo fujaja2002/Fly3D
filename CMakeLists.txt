@@ -14,6 +14,9 @@ elseif (UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPLATFORM_LINUX=1")
 endif ()
 
+ADD_DEFINITIONS(-DUNICODE)
+ADD_DEFINITIONS(-D_UNICODE)
+
 include_directories(
 	Source/
 )
@@ -27,3 +30,4 @@ set(ALL_LIBS
 
 add_executable(${ENGINE_NAME} Source/main.cpp)
 target_link_libraries(${ENGINE_NAME} ${ALL_LIBS})
+set_target_properties(${ENGINE_NAME} PROPERTIES LINK_FLAGS /SUBSYSTEM:WINDOWS)
