@@ -45,14 +45,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	const HWND hDesktop = GetDesktopWindow();
 	GetWindowRect(hDesktop, &desktop);
 
-	printf("size=%dx%d\n", desktop.right, desktop.bottom);
-
 	while (true)
 	{
 		GetApplication()->PumpMessages(0.16f);
 	}
 
 	WindowsApplication::DestroyApplication();
+
+	
 
     return 0;
 }
