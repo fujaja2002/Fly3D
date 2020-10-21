@@ -15,7 +15,6 @@ typedef wchar_t				WIDECHAR;
 typedef uint8				CHAR8;
 typedef uint16				CHAR16;
 typedef uint32				CHAR32;
-typedef WIDECHAR			TCHAR;
 
 typedef int32				TYPE_OF_NULL;
 typedef decltype(nullptr)	TYPE_OF_NULLPTR;
