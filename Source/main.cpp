@@ -3,6 +3,8 @@
 #include "Runtime/Windows/WindowsMisc.h"
 #include "Runtime/Math/Math.h"
 
+#include "Runtime/Template/Function.h"
+
 #include <string>
 #include <stdio.h>
 #include <Windows.h>
@@ -33,7 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 #if FLY_DEBUG
 	SetupDebugConsole();
 #endif
-	
+
 	std::shared_ptr<WindowDefinition> def = std::make_shared<WindowDefinition>();
 	FitWindowSize(0.8f, 0.8f, def);
 	
@@ -51,8 +53,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	}
 
 	WindowsApplication::DestroyApplication();
-
-	
 
     return 0;
 }

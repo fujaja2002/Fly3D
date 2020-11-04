@@ -1,2 +1,3 @@
 SetAllocatorTypeName(Temp)
 SetAllocatorTypeName(Regular)
+SetAllocatorTypeName(Function)
