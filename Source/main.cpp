@@ -3,6 +3,8 @@
 #include "Runtime/Windows/WindowsMisc.h"
 #include "Runtime/Math/Math.h"
 
+#include "Runtime/Template/Function.h"
+
 #include <string>
 #include <stdio.h>
 #include <Windows.h>
@@ -13,14 +15,14 @@ void SetupDebugConsole()
 	freopen("CONOUT$", "w", stdout);
 }
 
-void FitWindowSize(float widthBias, float heightBias, std::shared_ptr<WindowDefinition>& def)
+void FitWindowSize(float widthBias, float heightBias, std::shared_ptr<FWindowDefinition>& def)
 {
 	int32 width  = -1;
 	int32 height = -1;
-	WindowsMisc::GetDesktopResolution(width, height);
+	FWindowsMisc::GetDesktopResolution(width, height);
 
-	int32 realWidth  = Math::TruncToInt(width  * widthBias);
-	int32 realHeight = Math::TruncToInt(height * heightBias);
+	int32 realWidth  = FMath::TruncToInt(width  * widthBias);
+	int32 realHeight = FMath::TruncToInt(height * heightBias);
 
 	def->xDesiredPositionOnScreen = (width - realWidth) / 2;
 	def->yDesiredPositionOnScreen = (height - realHeight) / 2;
@@ -33,11 +35,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 #if FLY_DEBUG
 	SetupDebugConsole();
 #endif
-	
-	std::shared_ptr<WindowDefinition> def = std::make_shared<WindowDefinition>();
+
+	std::shared_ptr<FWindowDefinition> def = std::make_shared<FWindowDefinition>();
 	FitWindowSize(0.8f, 0.8f, def);
 	
-	WindowsApplication::CreateApplication(hInstance, NULL);
+	FWindowsApplication::CreateApplication(hInstance, NULL);
 	
 	WindowPtr window = GetApplication()->MakeWindow(def, nullptr, true);
 
@@ -50,9 +52,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 		GetApplication()->PumpMessages(0.16f);
 	}
 
-	WindowsApplication::DestroyApplication();
-
-	
+	FWindowsApplication::DestroyApplication();
 
     return 0;
 }

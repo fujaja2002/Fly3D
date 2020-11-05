@@ -6,15 +6,15 @@
 
 #include <string>
 
-struct WindowsMisc
+struct FWindowsMisc
 {
 	static void RequestMinimize();
 	static bool IsThisApplicationForeground();
 	static int32 GetAppIcon();
 	static void PreventScreenSaver();
-	static LinearColor GetScreenPixelColor(const Vector2D& inScreenPos, float inGamma = 1.0f);
+	static FLinearColor GetScreenPixelColor(const FVector2D& inScreenPos, float inGamma = 1.0f);
 	static bool GetWindowTitleMatchingText(const WIDECHAR* titleStartsWith, std::wstring& outTitle);
-	static float GetDPIScaleFactorAtPoint(float x, float y);
+	static float GetDPIScaleFactorAtPoint(int32 x, int32 y);
 	static void ClipboardCopy(const WIDECHAR* str);
 	static void ClipboardPaste(std::wstring& dest);
 	static void GetDesktopResolution(int32& outWidth, int32& outHeight);

@@ -2,17 +2,17 @@
 
 #include "Runtime/Platform/Platform.h"
 
-struct Color32;
-struct LinearColor;
+struct FColor32;
+struct FLinearColor;
 
-struct LinearColor
+struct FLinearColor
 {
 
 public:
 
-	static float Pow22OneOver255Table[256];
+	static double Pow22OneOver255Table[256];
 
-	static float sRGBToLinearTable[256];
+	static double sRGBToLinearTable[256];
 
 public:
 
@@ -23,15 +23,15 @@ public:
 
 public:
 
-	LinearColor();
+	FLinearColor();
 
-	LinearColor(float inR, float inG, float inB, float inA = 1.0f);
+	FLinearColor(float inR, float inG, float inB, float inA = 1.0f);
 
-	LinearColor(const Color32& inColor);
+	FLinearColor(const FColor32& inColor);
 
 };
 
-struct Color32
+struct FColor32
 {
 public:
 
@@ -42,8 +42,8 @@ public:
 
 public:
 
-	Color32();
+	FColor32();
 
-	Color32(uint8 inR, uint8 inG, uint8 inB, uint8 inA);
+	FColor32(uint8 inR, uint8 inG, uint8 inB, uint8 inA);
 
 };

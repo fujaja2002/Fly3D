@@ -1,11 +1,11 @@
 #pragma once
 
-enum AllocatorType
+enum EAllocatorType
 {
-#define SetAllocatorTypeName(Name) kMemType##Name ,
+#define DO_LABEL(Name) kMemType##Name,
 #include "AllocatorType.inc"
-#undef SetAllocatorTypeName
+#undef DO_LABEL
 	kMemTypeCout
 };
 
-const char* GetAllocatorTypeName(AllocatorType type);
+const char* GetAllocatorTypeName(EAllocatorType type);

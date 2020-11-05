@@ -8,7 +8,7 @@ FORCE_INLINE bool IsPowerOfTwo(T value)
 	return (value & (value - 1)) == 0;
 }
 
-struct Math
+struct FMath
 {
 	static constexpr int32 TruncToInt(float F)
 	{

@@ -7,21 +7,21 @@
 #include <Windows.h>
 #include <memory>
 
-class WindowsWindow : public Noncopyable, public IDropTarget
+class FWindowsWindow : public Noncopyable, public IDropTarget
 {
 public:
 
 	static const WIDECHAR AppWindowClass[];
 
-	static std::shared_ptr<WindowsWindow> MakeWindow();
+	static std::shared_ptr<FWindowsWindow> MakeWindow();
 
 public:
 
-	virtual ~WindowsWindow();
+	virtual ~FWindowsWindow();
 
 	HWND GetHWnd() const;
 
-	void Initialize(const std::shared_ptr<WindowDefinition>& inDefinition, HINSTANCE inHInstance, const std::shared_ptr<WindowsWindow>& inParent, const bool showImmediately);
+	void Initialize(const std::shared_ptr<FWindowDefinition>& inDefinition, HINSTANCE inHInstance, const std::shared_ptr<FWindowsWindow>& inParent, const bool showImmediately);
 
 	bool IsRegularWindow() const;
 
@@ -83,9 +83,9 @@ public:
 
 	virtual void SetText(const WIDECHAR* const Text);
 
-	virtual void SetWindowMode(WindowMode newWindowMode);
+	virtual void SetWindowMode(EWindowMode newWindowMode);
 
-	virtual WindowMode GetWindowMode() const 
+	virtual EWindowMode GetWindowMode() const 
 	{ 
 		return m_WindowMode; 
 	} 
@@ -123,7 +123,7 @@ public:
 
 private:
 
-	WindowsWindow();
+	FWindowsWindow();
 
 	void UpdateVisibility();
 
@@ -131,7 +131,7 @@ private:
 
 private:
 
-	typedef std::shared_ptr<WindowDefinition> WindowDefinitionPtr;
+	typedef std::shared_ptr<FWindowDefinition> WindowDefinitionPtr;
 
 	WindowDefinitionPtr m_Definition;
 
@@ -140,7 +140,7 @@ private:
 	int32				m_RegionWidth;
 	int32				m_RegionHeight;
 
-	WindowMode			m_WindowMode;
+	EWindowMode			m_WindowMode;
 
 	WINDOWPLACEMENT		m_PreFullscreenWindowPlacement;
 	WINDOWPLACEMENT		m_PreParentMinimizedWindowPlacement;

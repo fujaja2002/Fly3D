@@ -4,7 +4,7 @@
 
 #include <string>
 
-enum class WindowMode
+enum class EWindowMode
 {
 	Fullscreen,
 	WindowedFullscreen,
@@ -12,7 +12,7 @@ enum class WindowMode
 	NumWindowModes
 };
 
-enum class WindowType
+enum class EWindowType
 {
 	/** general-purpose window */
 	Normal,
@@ -26,7 +26,7 @@ enum class WindowType
 	CursorDecorator
 };
 
-enum class WindowTransparency
+enum class EWindowTransparency
 {
 	/** not support transparency */
 	None,
@@ -38,7 +38,7 @@ enum class WindowTransparency
 	PerPixel
 };
 
-enum class WindowActivationPolicy
+enum class EWindowActivationPolicy
 {
 	/** never activates when it is shown */
 	Never,
@@ -50,12 +50,12 @@ enum class WindowActivationPolicy
 	FirstShown
 };
 
-struct WindowSizeLimits
+struct FWindowSizeLimits
 {
 
 public:
 
-	WindowSizeLimits& SetMinWidth(float width)
+	FWindowSizeLimits& SetMinWidth(float width)
 	{
 		m_MinWidth = width;
 		return *this;
@@ -66,7 +66,7 @@ public:
 		return m_MinWidth;
 	}
 
-	WindowSizeLimits& SetMinHeight(float height)
+	FWindowSizeLimits& SetMinHeight(float height)
 	{ 
 		m_MinHeight = height; 
 		return *this; 
@@ -77,7 +77,7 @@ public:
 		return m_MinHeight; 
 	}
 
-	WindowSizeLimits& SetMaxWidth(float width)
+	FWindowSizeLimits& SetMaxWidth(float width)
 	{ 
 		m_MaxWidth = width; 
 		return *this; 
@@ -88,7 +88,7 @@ public:
 		return m_MaxWidth; 
 	}
 
-	WindowSizeLimits& SetMaxHeight(float height)
+	FWindowSizeLimits& SetMaxHeight(float height)
 	{ 
 		m_MaxHeight = height; 
 		return *this; 
@@ -106,21 +106,21 @@ private:
 	float m_MaxHeight;
 };
 
-struct WindowDefinition
+struct FWindowDefinition
 {
-	WindowType				type = WindowType::Normal;
-	WindowTransparency		transparencySupport = WindowTransparency::None;
-	WindowActivationPolicy	activationPolicy = WindowActivationPolicy::Always;
+	EWindowType				type = EWindowType::Normal;
+	EWindowTransparency		transparencySupport = EWindowTransparency::None;
+	EWindowActivationPolicy	activationPolicy = EWindowActivationPolicy::Always;
 
 	/** desired horizontal screen position */
-	float					xDesiredPositionOnScreen = 0.0f;
+	int32					xDesiredPositionOnScreen = 0;
 	/** desired vertical screen position */
-	float					yDesiredPositionOnScreen = 0.0f;
+	int32					yDesiredPositionOnScreen = 0;
 
 	/** desired width */
-	float					widthDesiredOnScreen = 1024.0f;
+	int32					widthDesiredOnScreen = 1024;
 	/** desired height */
-	float					heightDesiredOnScreen = 768.0f;
+	int32					heightDesiredOnScreen = 768;
 
 	/** expected maximum width */
 	int32					expectedMaxWidth = 4096;

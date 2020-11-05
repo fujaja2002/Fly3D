@@ -5,40 +5,40 @@
 static int32 WindowsAeroBorderSize     = 8;
 static int32 WindowsStandardBorderSize = 4;
 
-const WIDECHAR WindowsWindow::AppWindowClass[] = L"Fly3DWindow";
+const WIDECHAR FWindowsWindow::AppWindowClass[] = L"Fly3DWindow";
 
-std::shared_ptr<WindowsWindow> WindowsWindow::MakeWindow()
+std::shared_ptr<FWindowsWindow> FWindowsWindow::MakeWindow()
 {
-	return std::shared_ptr<WindowsWindow>(new WindowsWindow());
+	return std::shared_ptr<FWindowsWindow>(new FWindowsWindow());
 }
 
-WindowsWindow::~WindowsWindow()
+FWindowsWindow::~FWindowsWindow()
 {
 
 }
 
-HWND WindowsWindow::GetHWnd() const
+HWND FWindowsWindow::GetHWnd() const
 {
 	return m_HWnd;
 }
 
-void WindowsWindow::Initialize(const std::shared_ptr<WindowDefinition>& inDefinition, HINSTANCE inHInstance, const std::shared_ptr<WindowsWindow>& inParent, const bool showImmediately)
+void FWindowsWindow::Initialize(const std::shared_ptr<FWindowDefinition>& inDefinition, HINSTANCE inHInstance, const std::shared_ptr<FWindowsWindow>& inParent, const bool showImmediately)
 {
 	m_Definition   = inDefinition;
 	m_RegionWidth  = -1;
 	m_RegionHeight = -1;
 
-	const float xInitialRect  = inDefinition->xDesiredPositionOnScreen;
-	const float yInitialRect  = inDefinition->yDesiredPositionOnScreen;
-	const float widthInitial  = inDefinition->widthDesiredOnScreen;
-	const float heightInitial = inDefinition->heightDesiredOnScreen;
+	const int32 xInitialRect  = inDefinition->xDesiredPositionOnScreen;
+	const int32 yInitialRect  = inDefinition->yDesiredPositionOnScreen;
+	const int32 widthInitial  = inDefinition->widthDesiredOnScreen;
+	const int32 heightInitial = inDefinition->heightDesiredOnScreen;
 
-	m_DPIScaleFactor = WindowsMisc::GetDPIScaleFactorAtPoint(xInitialRect, yInitialRect);
+	m_DPIScaleFactor = FWindowsMisc::GetDPIScaleFactorAtPoint(xInitialRect, yInitialRect);
 
-	int32 clientX = Math::TruncToInt(xInitialRect);
-	int32 clientY = Math::TruncToInt(yInitialRect);
-	int32 clientWidth  = Math::TruncToInt(widthInitial);
-	int32 clientHeight = Math::TruncToInt(heightInitial);
+	int32 clientX = xInitialRect;
+	int32 clientY = yInitialRect;
+	int32 clientWidth  = widthInitial;
+	int32 clientHeight = heightInitial;
 	int32 windowX = clientX;
 	int32 windowY = clientY;
 	int32 windowWidth  = clientWidth;
@@ -52,11 +52,11 @@ void WindowsWindow::Initialize(const std::shared_ptr<WindowDefinition>& inDefini
 	if (!inDefinition->hasOSWindowBorder)
 	{
 		windowExStyle = WS_EX_WINDOWEDGE;
-		if (inDefinition->transparencySupport == WindowTransparency::PerWindow)
+		if (inDefinition->transparencySupport == EWindowTransparency::PerWindow)
 		{
 			windowExStyle |= WS_EX_LAYERED;
 		}
-		else if (inDefinition->transparencySupport == WindowTransparency::PerPixel)
+		else if (inDefinition->transparencySupport == EWindowTransparency::PerPixel)
 		{
 			if (supportsPerPixelBlending )
 			{
@@ -154,7 +154,7 @@ void WindowsWindow::Initialize(const std::shared_ptr<WindowDefinition>& inDefini
 
 	ReshapeWindow(clientX, clientY, clientWidth, clientHeight);
 
-	if (inDefinition->transparencySupport == WindowTransparency::PerWindow)
+	if (inDefinition->transparencySupport == EWindowTransparency::PerWindow)
 	{
 		SetOpacity(inDefinition->opacity);
 	}
@@ -181,7 +181,7 @@ void WindowsWindow::Initialize(const std::shared_ptr<WindowDefinition>& inDefini
 
 		uint32 SetWindowPositionFlags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED;
 
-		if (inDefinition->activationPolicy == WindowActivationPolicy::Never)
+		if (inDefinition->activationPolicy == EWindowActivationPolicy::Never)
 		{
 			SetWindowPositionFlags |= SWP_NOACTIVATE;
 		}
@@ -209,12 +209,12 @@ void WindowsWindow::Initialize(const std::shared_ptr<WindowDefinition>& inDefini
 	}
 }
 
-bool WindowsWindow::IsRegularWindow() const
+bool FWindowsWindow::IsRegularWindow() const
 {
 	return m_Definition->isRegularWindow;
 }
 
-void WindowsWindow::AdjustWindowRegion(int32 width, int32 height)
+void FWindowsWindow::AdjustWindowRegion(int32 width, int32 height)
 {
 	m_RegionWidth  = width;
 	m_RegionHeight = height;
@@ -223,32 +223,32 @@ void WindowsWindow::AdjustWindowRegion(int32 width, int32 height)
 	SetWindowRgn(m_HWnd, region, false);
 }
 
-void WindowsWindow::OnParentWindowMinimized()
+void FWindowsWindow::OnParentWindowMinimized()
 {
 	::GetWindowPlacement(m_HWnd, &m_PreParentMinimizedWindowPlacement);
 }
 
-void WindowsWindow::OnParentWindowRestored()
+void FWindowsWindow::OnParentWindowRestored()
 {
 	::SetWindowPlacement(m_HWnd, &m_PreParentMinimizedWindowPlacement);
 }
 
-bool WindowsWindow::IsEnabled()
+bool FWindowsWindow::IsEnabled()
 {
 	return !!::IsWindowEnabled(m_HWnd);
 }
 
-bool WindowsWindow::IsManualManageDPIChanges() const
+bool FWindowsWindow::IsManualManageDPIChanges() const
 {
 	return m_HandleManualDPIChanges;
 }
 
-void WindowsWindow::SetManualManageDPIChanges(const bool manualDPIChanges)
+void FWindowsWindow::SetManualManageDPIChanges(const bool manualDPIChanges)
 {
 	m_HandleManualDPIChanges = manualDPIChanges;
 }
 
-void WindowsWindow::ReshapeWindow(int32 newX, int32 newY, int32 newWidth, int32 newHeight)
+void FWindowsWindow::ReshapeWindow(int32 newX, int32 newY, int32 newWidth, int32 newHeight)
 {
 	m_AspectRatio = (float)newWidth / (float)newHeight;
 
@@ -276,12 +276,12 @@ void WindowsWindow::ReshapeWindow(int32 newX, int32 newY, int32 newWidth, int32 
 		Restore();
 	}
 
-	::SetWindowPos(m_HWnd, nullptr, windowX, windowY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE | ((m_WindowMode == WindowMode::Fullscreen) ? SWP_NOSENDCHANGING : 0));
+	::SetWindowPos(m_HWnd, nullptr, windowX, windowY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE | ((m_WindowMode == EWindowMode::Fullscreen) ? SWP_NOSENDCHANGING : 0));
 }
 
-bool WindowsWindow::GetFullScreenInfo(int32& x, int32& y, int32& width, int32& height) const
+bool FWindowsWindow::GetFullScreenInfo(int32& x, int32& y, int32& width, int32& height) const
 {
-	bool trueFullscreen = m_WindowMode == WindowMode::Fullscreen;
+	bool trueFullscreen = m_WindowMode == EWindowMode::Fullscreen;
 
 	HMONITOR monitor = MonitorFromWindow(m_HWnd, trueFullscreen ? MONITOR_DEFAULTTOPRIMARY : MONITOR_DEFAULTTONEAREST);
 
@@ -297,7 +297,7 @@ bool WindowsWindow::GetFullScreenInfo(int32& x, int32& y, int32& width, int32& h
 	return true;
 }
 
-void WindowsWindow::MoveWindowTo(int32 x, int32 y)
+void FWindowsWindow::MoveWindowTo(int32 x, int32 y)
 {
 	if (m_Definition->hasOSWindowBorder)
 	{
@@ -314,7 +314,7 @@ void WindowsWindow::MoveWindowTo(int32 x, int32 y)
 	::SetWindowPos(m_HWnd, nullptr, x, y, 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void WindowsWindow::BringToFront(bool force)
+void FWindowsWindow::BringToFront(bool force)
 {
 	if (IsRegularWindow())
 	{
@@ -346,17 +346,17 @@ void WindowsWindow::BringToFront(bool force)
 	}
 }
 
-void WindowsWindow::ForceToFront()
+void FWindowsWindow::ForceToFront()
 {
 	::SetForegroundWindow(m_HWnd);
 }
 
-void WindowsWindow::Destroy()
+void FWindowsWindow::Destroy()
 {
 	::DestroyWindow(m_HWnd);
 }
 
-void WindowsWindow::Minimize()
+void FWindowsWindow::Minimize()
 {
 	if (!m_IsFirstTimeVisible)
 	{
@@ -369,7 +369,7 @@ void WindowsWindow::Minimize()
 	}
 }
 
-void WindowsWindow::Maximize()
+void FWindowsWindow::Maximize()
 {
 	if (!m_IsFirstTimeVisible)
 	{
@@ -382,7 +382,7 @@ void WindowsWindow::Maximize()
 	}
 }
 
-void WindowsWindow::Restore()
+void FWindowsWindow::Restore()
 {
 	if (!m_IsFirstTimeVisible)
 	{
@@ -395,7 +395,7 @@ void WindowsWindow::Restore()
 	}
 }
 
-void WindowsWindow::Show()
+void FWindowsWindow::Show()
 {
 	if (!m_IsVisible)
 	{
@@ -404,8 +404,8 @@ void WindowsWindow::Show()
 		bool shouldActivate = false;
 		if (m_Definition->acceptsInput)
 		{
-			shouldActivate = m_Definition->activationPolicy == WindowActivationPolicy::Always;
-			if (m_IsFirstTimeVisible && m_Definition->activationPolicy == WindowActivationPolicy::FirstShown)
+			shouldActivate = m_Definition->activationPolicy == EWindowActivationPolicy::Always;
+			if (m_IsFirstTimeVisible && m_Definition->activationPolicy == EWindowActivationPolicy::FirstShown)
 			{
 				shouldActivate = true;
 			}
@@ -429,7 +429,7 @@ void WindowsWindow::Show()
 	}
 }
 
-void WindowsWindow::Hide()
+void FWindowsWindow::Hide()
 {
 	if (m_IsVisible)
 	{
@@ -438,22 +438,22 @@ void WindowsWindow::Hide()
 	}
 }
 
-bool WindowsWindow::IsMaximized() const
+bool FWindowsWindow::IsMaximized() const
 {
 	return !!::IsZoomed(m_HWnd);
 }
 
-bool WindowsWindow::IsMinimized() const
+bool FWindowsWindow::IsMinimized() const
 {
 	return !!::IsIconic(m_HWnd);
 }
 
-bool WindowsWindow::IsVisible() const
+bool FWindowsWindow::IsVisible() const
 {
 	return m_IsVisible;
 }
 
-bool WindowsWindow::GetRestoredDimensions(int32& x, int32& y, int32& width, int32& height)
+bool FWindowsWindow::GetRestoredDimensions(int32& x, int32& y, int32& width, int32& height)
 {
 	WINDOWPLACEMENT windowPlacement;
 	windowPlacement.length = sizeof(WINDOWPLACEMENT);
@@ -470,7 +470,7 @@ bool WindowsWindow::GetRestoredDimensions(int32& x, int32& y, int32& width, int3
 		const LONG windowExStyle = ::GetWindowLong(m_HWnd, GWL_EXSTYLE);
 		if ((windowExStyle & WS_EX_TOOLWINDOW) == 0)
 		{
-			const bool trueFullscreen = (m_WindowMode == WindowMode::Fullscreen);
+			const bool trueFullscreen = (m_WindowMode == EWindowMode::Fullscreen);
 			HMONITOR monitor = MonitorFromWindow(m_HWnd, trueFullscreen ? MONITOR_DEFAULTTOPRIMARY : MONITOR_DEFAULTTONEAREST);
 			MONITORINFO monitorInfo;
 			monitorInfo.cbSize = sizeof(MONITORINFO);
@@ -488,7 +488,7 @@ bool WindowsWindow::GetRestoredDimensions(int32& x, int32& y, int32& width, int3
 	}
 }
 
-void WindowsWindow::SetWindowFocus()
+void FWindowsWindow::SetWindowFocus()
 {
 	if (GetFocus() != m_HWnd)
 	{
@@ -496,17 +496,17 @@ void WindowsWindow::SetWindowFocus()
 	}
 }
 
-void WindowsWindow::SetOpacity(const float inOpacity)
+void FWindowsWindow::SetOpacity(const float inOpacity)
 {
-	SetLayeredWindowAttributes(m_HWnd, 0, Math::TruncToInt(inOpacity * 255.0f), LWA_ALPHA);
+	SetLayeredWindowAttributes(m_HWnd, 0, FMath::TruncToInt(inOpacity * 255.0f), LWA_ALPHA);
 }
 
-void WindowsWindow::Enable(bool enable)
+void FWindowsWindow::Enable(bool enable)
 {
 	::EnableWindow(m_HWnd, enable);
 }
 
-bool WindowsWindow::IsPointInWindow(int32 x, int32 y) const
+bool FWindowsWindow::IsPointInWindow(int32 x, int32 y) const
 {
 	HRGN region = MakeWindowRegionObject(false);
 	bool result = !!PtInRegion(region, x, y);
@@ -516,7 +516,7 @@ bool WindowsWindow::IsPointInWindow(int32 x, int32 y) const
 	return result;
 }
 
-int32 WindowsWindow::GetWindowBorderSize() const
+int32 FWindowsWindow::GetWindowBorderSize() const
 {
 	if (!m_Definition->hasOSWindowBorder)
 	{
@@ -530,29 +530,29 @@ int32 WindowsWindow::GetWindowBorderSize() const
 	return windowInfo.cxWindowBorders;
 }
 
-int32 WindowsWindow::GetWindowTitleBarSize() const
+int32 FWindowsWindow::GetWindowTitleBarSize() const
 {
 	return GetSystemMetrics(SM_CYCAPTION);
 }
 
-bool WindowsWindow::IsForegroundWindow() const
+bool FWindowsWindow::IsForegroundWindow() const
 {
 	return ::GetForegroundWindow() == m_HWnd;
 }
 
-void WindowsWindow::SetText(const WIDECHAR* const text)
+void FWindowsWindow::SetText(const WIDECHAR* const text)
 {
 	SetWindowText(m_HWnd, text);
 }
 
-void WindowsWindow::SetWindowMode(WindowMode newWindowMode)
+void FWindowsWindow::SetWindowMode(EWindowMode newWindowMode)
 {
 	if (newWindowMode != m_WindowMode)
 	{
-		WindowMode previousWindowMode = m_WindowMode;
+		EWindowMode previousWindowMode = m_WindowMode;
 		m_WindowMode = newWindowMode;
 
-		const bool trueFullscreen = newWindowMode == WindowMode::Fullscreen;
+		const bool trueFullscreen = newWindowMode == EWindowMode::Fullscreen;
 		const LONG fullscreenModeStyle = WS_POPUP;
 
 		LONG windowStyle = GetWindowLong(m_HWnd, GWL_STYLE);
@@ -584,9 +584,9 @@ void WindowsWindow::SetWindowMode(WindowMode newWindowMode)
 			windowedModeStyle |= WS_POPUP | WS_BORDER;
 		}
 
-		if (newWindowMode == WindowMode::WindowedFullscreen || newWindowMode == WindowMode::Fullscreen)
+		if (newWindowMode == EWindowMode::WindowedFullscreen || newWindowMode == EWindowMode::Fullscreen)
 		{
-			if (previousWindowMode == WindowMode::Windowed)
+			if (previousWindowMode == EWindowMode::Windowed)
 			{
 				m_PreFullscreenWindowPlacement.length = sizeof(WINDOWPLACEMENT);
 				::GetWindowPlacement(m_HWnd, &m_PreFullscreenWindowPlacement);
@@ -612,9 +612,9 @@ void WindowsWindow::SetWindowMode(WindowMode newWindowMode)
 			GetMonitorInfo(monitor, &monitorInfo);
 
 			LONG monitorWidth = monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left;
-			LONG targetClientWidth = trueFullscreen ? Math::Min(monitorWidth, clientRect.right - clientRect.left) : monitorWidth;
+			LONG targetClientWidth = trueFullscreen ? FMath::Min(monitorWidth, clientRect.right - clientRect.left) : monitorWidth;
 			LONG monitorHeight = monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top;
-			LONG targetClientHeight = trueFullscreen ? Math::Min(monitorHeight, clientRect.bottom - clientRect.top) : monitorHeight;
+			LONG targetClientHeight = trueFullscreen ? FMath::Min(monitorHeight, clientRect.bottom - clientRect.top) : monitorHeight;
 
 			ReshapeWindow(
 				monitorInfo.rcMonitor.left,
@@ -638,54 +638,54 @@ void WindowsWindow::SetWindowMode(WindowMode newWindowMode)
 	}
 }
 
-HRESULT __stdcall WindowsWindow::DragEnter(__RPC__in_opt IDataObject *dataObjectPointer, ::DWORD keyState, POINTL cursorPosition, __RPC__inout::DWORD *cursorEffect)
+HRESULT __stdcall FWindowsWindow::DragEnter(__RPC__in_opt IDataObject *dataObjectPointer, ::DWORD keyState, POINTL cursorPosition, __RPC__inout::DWORD *cursorEffect)
 {
 	printf("DragEnter\n");
 	return 0;
 }
 
-HRESULT __stdcall WindowsWindow::DragOver(::DWORD keyState, POINTL cursorPosition, __RPC__inout ::DWORD *cursorEffect)
+HRESULT __stdcall FWindowsWindow::DragOver(::DWORD keyState, POINTL cursorPosition, __RPC__inout ::DWORD *cursorEffect)
 {
 	printf("DragOver\n");
 	return 0;
 }
 
-HRESULT __stdcall WindowsWindow::DragLeave(void)
+HRESULT __stdcall FWindowsWindow::DragLeave(void)
 {
 	printf("DragLeave\n");
 	return 0;
 }
 
-HRESULT __stdcall WindowsWindow::Drop(__RPC__in_opt IDataObject *dataObjectPointer, ::DWORD keyState, POINTL cursorPosition, __RPC__inout::DWORD *cursorEffect)
+HRESULT __stdcall FWindowsWindow::Drop(__RPC__in_opt IDataObject *dataObjectPointer, ::DWORD keyState, POINTL cursorPosition, __RPC__inout::DWORD *cursorEffect)
 {
 	printf("Drop\n");
 	return 0;
 }
 
-HRESULT __stdcall WindowsWindow::QueryInterface(REFIID iid, void ** ppvObject)
+HRESULT __stdcall FWindowsWindow::QueryInterface(REFIID iid, void ** ppvObject)
 {
 	printf("QueryInterface\n");
 	return 0;
 }
 
-ULONG __stdcall WindowsWindow::AddRef(void)
+ULONG __stdcall FWindowsWindow::AddRef(void)
 {
 	printf("AddRef\n");
 	return 0;
 }
 
-ULONG __stdcall WindowsWindow::Release(void)
+ULONG __stdcall FWindowsWindow::Release(void)
 {
 	printf("Release\n");
 	return 0;
 }
 
-WindowsWindow::WindowsWindow()
+FWindowsWindow::FWindowsWindow()
 	: m_Definition(nullptr)
 	, m_HWnd(NULL)
 	, m_RegionWidth(-1)
 	, m_RegionHeight(-1)
-	, m_WindowMode(WindowMode::Windowed)
+	, m_WindowMode(EWindowMode::Windowed)
 	, m_AspectRatio(1.0f)
 	, m_DPIScaleFactor(1.0f)
 	, m_IsVisible(false)
@@ -700,12 +700,12 @@ WindowsWindow::WindowsWindow()
 	m_PreParentMinimizedWindowPlacement.length = sizeof(WINDOWPLACEMENT);
 }
 
-void WindowsWindow::UpdateVisibility()
+void FWindowsWindow::UpdateVisibility()
 {
 
 }
 
-HRGN WindowsWindow::MakeWindowRegionObject(bool includeBorderWhenMaximized) const
+HRGN FWindowsWindow::MakeWindowRegionObject(bool includeBorderWhenMaximized) const
 {
 	HRGN region;
 	if (m_RegionWidth != -1 && m_RegionHeight != -1)
@@ -731,9 +731,9 @@ HRGN WindowsWindow::MakeWindowRegionObject(bool includeBorderWhenMaximized) cons
 		else
 		{
 			const bool useCornerRadius = 
-				m_WindowMode == WindowMode::Windowed && 
+				m_WindowMode == EWindowMode::Windowed && 
 				!isBorderlessGameWindow &&
-				m_Definition->transparencySupport != WindowTransparency::PerPixel &&
+				m_Definition->transparencySupport != EWindowTransparency::PerPixel &&
 				m_Definition->cornerRadius > 0;
 
 			if (useCornerRadius)

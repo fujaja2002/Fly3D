@@ -2,7 +2,7 @@
 
 #include "Runtime/Platform/Platform.h"
 
-struct Vector2D
+struct FVector2D
 {
 public:
 	float x;
@@ -10,9 +10,8 @@ public:
 
 public:
 
-	Vector2D();
+	FVector2D();
 
-	Vector2D(float x, float y);
+	FVector2D(float x, float y);
 
-	
 };

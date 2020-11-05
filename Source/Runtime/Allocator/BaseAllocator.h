@@ -6,21 +6,24 @@
 
 #include <stddef.h>
 
-class BaseAllocator : public Noncopyable
+class FBaseAllocator : public Noncopyable
 {
 protected:
 
-	enum { DEFAULT_ALIGN_SIZE = sizeof(size_t) };
+	enum 
+	{ 
+		DEFAULT_ALIGN_SIZE = sizeof(size_t) 
+	};
 	 
 public:
 
-	BaseAllocator(bool threadSafe = false);
+	FBaseAllocator(bool threadSafe = false);
 
-	virtual ~BaseAllocator();
+	virtual ~FBaseAllocator();
 
-	virtual uint8* Allocate(uint32 size, int32 align, AllocatorType type, const char* file, int32 line) = 0;
+	virtual uint8* Allocate(uint32 size, int32 align, EAllocatorType type, const char* file, int32 line) = 0;
 
-	virtual uint8* Reallocate(uint8* p, uint32 size, int32 align, AllocatorType type, const char* file, int32 line) = 0;
+	virtual uint8* Reallocate(uint8* p, uint32 size, int32 align, EAllocatorType type, const char* file, int32 line) = 0;
 
 	virtual bool Deallocate(uint8* p) = 0;
 
@@ -65,4 +68,4 @@ private:
 	bool	m_IsThreadSafe;
 };
 
-BaseAllocator* GetAllocator();
+FBaseAllocator* GetAllocator();

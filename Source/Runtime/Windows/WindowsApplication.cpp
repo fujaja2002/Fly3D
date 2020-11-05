@@ -2,20 +2,20 @@
 #include "Runtime/Windows/WindowsWindow.h"
 #include "Runtime/Platform/Platform.h"
 
-static WindowsApplication* g_Application = nullptr;
+static FWindowsApplication* g_Application = nullptr;
 
-WindowsApplication* GetApplication()
+FWindowsApplication* GetApplication()
 {
 	Assert(g_Application);
 	return g_Application;
 }
 
-LRESULT CALLBACK WindowsApplication::AppWndProc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK FWindowsApplication::AppWndProc(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
 {
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-bool WindowsApplication::RegisterWindowClass(const HINSTANCE hInstance, const HICON hIcon)
+bool FWindowsApplication::RegisterWindowClass(const HINSTANCE hInstance, const HICON hIcon)
 {
 	WNDCLASS wc;
 	memset(&wc, 0, sizeof(WNDCLASS));
@@ -28,7 +28,7 @@ bool WindowsApplication::RegisterWindowClass(const HINSTANCE hInstance, const HI
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = NULL;
 	wc.lpszMenuName = NULL;
-	wc.lpszClassName = WindowsWindow::AppWindowClass;
+	wc.lpszClassName = FWindowsWindow::AppWindowClass;
 
 	if (!::RegisterClass(&wc))
 	{
@@ -39,19 +39,19 @@ bool WindowsApplication::RegisterWindowClass(const HINSTANCE hInstance, const HI
 	return true;
 }
 
-void WindowsApplication::CreateApplication(const HINSTANCE instanceHandle, const HICON iconHandle)
+void FWindowsApplication::CreateApplication(const HINSTANCE instanceHandle, const HICON iconHandle)
 {
 	if (g_Application)
 	{
 		return;
 	}
 
-	WindowsApplication::RegisterWindowClass(instanceHandle, iconHandle);
+	FWindowsApplication::RegisterWindowClass(instanceHandle, iconHandle);
 
-	g_Application = new WindowsApplication(instanceHandle, iconHandle);
+	g_Application = new FWindowsApplication(instanceHandle, iconHandle);
 }
 
-void WindowsApplication::DestroyApplication()
+void FWindowsApplication::DestroyApplication()
 {
 	if (!g_Application)
 	{
@@ -63,9 +63,9 @@ void WindowsApplication::DestroyApplication()
 	g_Application = nullptr;
 }
 
-WindowPtr WindowsApplication::MakeWindow(const std::shared_ptr<WindowDefinition>& definition, const WindowPtr& parent, const bool showImmediately)
+WindowPtr FWindowsApplication::MakeWindow(const std::shared_ptr<FWindowDefinition>& definition, const WindowPtr& parent, const bool showImmediately)
 {
-	WindowPtr window = WindowsWindow::MakeWindow();
+	WindowPtr window = FWindowsWindow::MakeWindow();
 	window->Initialize(definition, m_InstanceHandle, parent, showImmediately);
 
 	m_Windows.push_back(window);
@@ -73,14 +73,14 @@ WindowPtr WindowsApplication::MakeWindow(const std::shared_ptr<WindowDefinition>
 	return window;
 }
 
-WindowsApplication::WindowsApplication(const HINSTANCE instanceHandle, const HICON iconHandle)
+FWindowsApplication::FWindowsApplication(const HINSTANCE instanceHandle, const HICON iconHandle)
 	: m_InstanceHandle(instanceHandle)
 	, m_IconHandle(iconHandle)
 {
 	
 }
 
-WindowsApplication::~WindowsApplication()
+FWindowsApplication::~FWindowsApplication()
 {
 	for (int32 i = 0; i < m_Windows.size(); ++i)
 	{
@@ -90,7 +90,7 @@ WindowsApplication::~WindowsApplication()
 	m_Windows.clear();
 }
 
-void WindowsApplication::PumpMessages(const float deltaTime)
+void FWindowsApplication::PumpMessages(const float deltaTime)
 {
 	MSG message;
 
@@ -101,7 +101,7 @@ void WindowsApplication::PumpMessages(const float deltaTime)
 	}
 }
 
-int32 WindowsApplication::ProcessMessage(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
+int32 FWindowsApplication::ProcessMessage(HWND hwnd, uint32 msg, WPARAM wParam, LPARAM lParam)
 {
 	
 	return 0;

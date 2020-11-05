@@ -7,20 +7,20 @@
 
 #include <unordered_set>
 
-class MemoryProfiler;
-struct MemorySalt;
+class FMemoryProfiler;
+struct FMemorySalt;
 
-struct MemorySalt
+struct FMemorySalt
 {
 #if ENABLE_MEM_PROFILER
-	const char*		file;
-	int32			line;
+	const char*			file;
+	int32				line;
 #endif
-	int32			size;
-	AllocatorType	type;
-	BaseAllocator*  owner;
+	uint32				size;
+	EAllocatorType		type;
+	FBaseAllocator*		owner;
 
-	void Fill(int32 inSize, AllocatorType inType, BaseAllocator* inOwner, const char* inFile, int32 inLine)
+	void Fill(uint32 inSize, EAllocatorType inType, FBaseAllocator* inOwner, const char* inFile, int32 inLine)
 	{
 #if ENABLE_MEM_PROFILER
 		file = inFile;
@@ -34,35 +34,35 @@ struct MemorySalt
 
 #if ENABLE_MEM_PROFILER
 
-class MemoryProfiler : public Noncopyable
+class FMemoryProfiler : public Noncopyable
 {
 public:
 
-	MemoryProfiler();
+	FMemoryProfiler();
 
-	~MemoryProfiler();
+	~FMemoryProfiler();
 
 	constexpr static int32 MemorySaltSize()
 	{
-		return sizeof(MemorySalt);
+		return sizeof(FMemorySalt);
 	}
 
-	const MemorySalt* GetMemorySalt(const uint8* ptr);
+	const FMemorySalt* GetMemorySalt(const uint8* ptr);
 
 	uint32 GetMemoryHeaderSize();
 
 	uint32 GetAllocatedMemorySize();
 
-	bool RegisterAllocation(const MemorySalt* salt);
+	bool RegisterAllocation(const FMemorySalt* salt);
 
-	bool UnRegisterAllocation(const MemorySalt* salt);
+	bool UnRegisterAllocation(const FMemorySalt* salt);
 
 private:
 
-	std::unordered_set<const MemorySalt*> m_Salts;
+	std::unordered_set<const FMemorySalt*> m_Salts;
 
 };
 
-MemoryProfiler* GetMemoryProfiler();
+FMemoryProfiler* GetMemoryProfiler();
 
 #endif
