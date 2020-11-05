@@ -3,7 +3,7 @@
 #include "Runtime/Allocator/BaseAllocator.h"
 #include "Runtime/Profiler/MemoryProfiler.h"
 
-class TLSFAllocator : public BaseAllocator
+class FTLSFAllocator : public FBaseAllocator
 {
 	enum 
 	{
@@ -13,23 +13,23 @@ class TLSFAllocator : public BaseAllocator
 
 public:
 
-	TLSFAllocator();
+	FTLSFAllocator();
 
-	virtual ~TLSFAllocator();
+	virtual ~FTLSFAllocator();
 
 	int32 GetPoolSize();
 
 	int32 GetPoolCount();
 
-	virtual uint8* Allocate(uint32 size, int32 align, AllocatorType type, const char* file, int32 line) override;
+	virtual uint8* Allocate(uint32 size, int32 align, EAllocatorType type, const char* file, int32 line) override;
 
-	virtual uint8* Reallocate(uint8* p, uint32 size, int32 align, AllocatorType type, const char* file, int32 line) override;
+	virtual uint8* Reallocate(uint8* p, uint32 size, int32 align, EAllocatorType type, const char* file, int32 line) override;
 
 	virtual bool Deallocate(uint8* p) override;
 
 	virtual bool Contains(const uint8* p) const override;
 
-	const MemorySalt* GetMemorySalt(const uint8* p) const;
+	const FMemorySalt* GetMemorySalt(const uint8* p) const;
 
 private:
 

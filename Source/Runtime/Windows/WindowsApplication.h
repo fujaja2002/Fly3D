@@ -9,11 +9,11 @@
 #include <vector>
 #include <memory>
 
-class WindowsWindow;
+class FWindowsWindow;
 
-typedef std::shared_ptr<WindowsWindow> WindowPtr;
+typedef std::shared_ptr<FWindowsWindow> WindowPtr;
 
-class WindowsApplication : public Noncopyable
+class FWindowsApplication : public Noncopyable
 {
 public:
 
@@ -23,9 +23,9 @@ public:
 
 public:
 
-	virtual ~WindowsApplication();
+	virtual ~FWindowsApplication();
 
-	WindowPtr MakeWindow(const std::shared_ptr<WindowDefinition>& definition, const WindowPtr& parent, const bool showImmediately);
+	WindowPtr MakeWindow(const std::shared_ptr<FWindowDefinition>& definition, const WindowPtr& parent, const bool showImmediately);
 
 	void PumpMessages(const float deltaTime);
 
@@ -39,7 +39,7 @@ protected:
 
 private:
 
-	WindowsApplication(const HINSTANCE instanceHandle, const HICON iconHandle);
+	FWindowsApplication(const HINSTANCE instanceHandle, const HICON iconHandle);
 
 private:
 
@@ -49,4 +49,4 @@ private:
 
 };
 
-WindowsApplication* GetApplication();
+FWindowsApplication* GetApplication();

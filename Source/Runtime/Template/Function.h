@@ -624,9 +624,6 @@ public:
 
 	}
 
-	/**
-	* Constructor which binds a TFunction to any function object.
-	*/
 	template <
 		typename FunctorType,
 		typename = typename TEnableIf<

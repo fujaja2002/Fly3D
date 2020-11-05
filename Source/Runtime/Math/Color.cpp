@@ -2,7 +2,7 @@
 
 static const float OneOver255 = 1.0f / 255.0f;
 
-float LinearColor::Pow22OneOver255Table[256] = 
+double FLinearColor::Pow22OneOver255Table[256] = 
 {
 	0, 5.07705190066176E-06, 2.33280046660989E-05, 5.69217657121931E-05, 0.000107187362341244, 0.000175123977503027, 0.000261543754548491, 0.000367136269815943, 0.000492503787191433,
 	0.000638182842167022, 0.000804658499513058, 0.000992374304074325, 0.0012017395224384, 0.00143313458967186, 0.00168691531678928, 0.00196341621339647, 0.00226295316070643,
@@ -35,7 +35,7 @@ float LinearColor::Pow22OneOver255Table[256] =
 	0.948964938178195, 0.957369576199527, 0.96581465350313, 0.974300202388861, 0.982826255053791, 0.99139284359294, 1
 };
 
-float LinearColor::sRGBToLinearTable[256] =
+double FLinearColor::sRGBToLinearTable[256] =
 {
 	0,
 	0.000303526983548838, 0.000607053967097675, 0.000910580950646512, 0.00121410793419535, 0.00151763491774419,
@@ -91,7 +91,7 @@ float LinearColor::sRGBToLinearTable[256] =
 	0.964686244552961, 0.973445287039244, 0.982250546956257, 0.991102093719252, 1.0,
 };
 
-LinearColor::LinearColor()
+FLinearColor::FLinearColor()
 	: r(0.0f)
 	, g(0.0f)
 	, b(0.0f)
@@ -100,7 +100,7 @@ LinearColor::LinearColor()
 
 }
 
-LinearColor::LinearColor(float inR, float inG, float inB, float inA)
+FLinearColor::FLinearColor(float inR, float inG, float inB, float inA)
 	: r(inR)
 	, g(inG)
 	, b(inB)
@@ -109,16 +109,15 @@ LinearColor::LinearColor(float inR, float inG, float inB, float inA)
 
 }
 
-LinearColor::LinearColor(const Color32& inColor)
+FLinearColor::FLinearColor(const FColor32& inColor)
 {
-	r = sRGBToLinearTable[inColor.r];
-	g = sRGBToLinearTable[inColor.g];
-	b =	sRGBToLinearTable[inColor.b];
-	a =	float(inColor.a) * OneOver255;
+	r = static_cast<float>(sRGBToLinearTable[inColor.r]);
+	g = static_cast<float>(sRGBToLinearTable[inColor.g]);
+	b =	static_cast<float>(sRGBToLinearTable[inColor.b]);
+	a =	static_cast<float>(inColor.a) * OneOver255;
 }
 
-
-Color32::Color32()
+FColor32::FColor32()
 	: r(255)
 	, g(255)
 	, b(255)
@@ -127,7 +126,7 @@ Color32::Color32()
 
 }
 
-Color32::Color32(uint8 inR, uint8 inG, uint8 inB, uint8 inA)
+FColor32::FColor32(uint8 inR, uint8 inG, uint8 inB, uint8 inA)
 	: r(inR)
 	, g(inG)
 	, b(inB)

@@ -3,32 +3,32 @@
 
 #if ENABLE_MEM_PROFILER
 
-static MemoryProfiler g_MemoryProfiler;
+static FMemoryProfiler g_MemoryProfiler;
 
-MemoryProfiler* GetMemoryProfiler()
+FMemoryProfiler* GetMemoryProfiler()
 {
 	return &g_MemoryProfiler;
 }
 
-MemoryProfiler::MemoryProfiler()
+FMemoryProfiler::FMemoryProfiler()
 	: m_Salts()
 {
 
 }
 
-MemoryProfiler::~MemoryProfiler()
+FMemoryProfiler::~FMemoryProfiler()
 {
 
 }
 
-const MemorySalt* MemoryProfiler::GetMemorySalt(const uint8* ptr)
+const FMemorySalt* FMemoryProfiler::GetMemorySalt(const uint8* ptr)
 {
 	if (ptr == nullptr)
 	{
 		return nullptr;
 	}
 
-	const MemorySalt* salt = (const MemorySalt*)(ptr - MemorySaltSize());
+	const FMemorySalt* salt = (const FMemorySalt*)(ptr - MemorySaltSize());
 
 	if (m_Salts.find(salt) != m_Salts.end())
 	{
@@ -38,12 +38,12 @@ const MemorySalt* MemoryProfiler::GetMemorySalt(const uint8* ptr)
 	return nullptr;
 }
 
-uint32 MemoryProfiler::GetMemoryHeaderSize()
+uint32 FMemoryProfiler::GetMemoryHeaderSize()
 {
-	return m_Salts.size() * MemorySaltSize();
+	return static_cast<uint32>(m_Salts.size()) * MemorySaltSize();
 }
 
-uint32 MemoryProfiler::GetAllocatedMemorySize()
+uint32 FMemoryProfiler::GetAllocatedMemorySize()
 {
 	uint32 size = 0;
 
@@ -55,7 +55,7 @@ uint32 MemoryProfiler::GetAllocatedMemorySize()
 	return size;
 }
 
-bool MemoryProfiler::RegisterAllocation(const MemorySalt* salt)
+bool FMemoryProfiler::RegisterAllocation(const FMemorySalt* salt)
 {
 	Assert(salt);
 
@@ -69,7 +69,7 @@ bool MemoryProfiler::RegisterAllocation(const MemorySalt* salt)
 	return true;
 }
 
-bool MemoryProfiler::UnRegisterAllocation(const MemorySalt* salt)
+bool FMemoryProfiler::UnRegisterAllocation(const FMemorySalt* salt)
 {
 	Assert(salt);
 

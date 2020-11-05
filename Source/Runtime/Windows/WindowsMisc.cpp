@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <tchar.h>
 
-void WindowsMisc::GetDesktopResolution(int32& outWidth, int32& outHeight)
+void FWindowsMisc::GetDesktopResolution(int32& outWidth, int32& outHeight)
 {
 	RECT desktop;
 	const HWND hDesktop = GetDesktopWindow();
@@ -13,24 +13,24 @@ void WindowsMisc::GetDesktopResolution(int32& outWidth, int32& outHeight)
 	outHeight = desktop.bottom;
 }
 
-void WindowsMisc::RequestMinimize()
+void FWindowsMisc::RequestMinimize()
 {
 	::ShowWindow(::GetActiveWindow(), SW_MINIMIZE);
 }
 
-bool WindowsMisc::IsThisApplicationForeground()
+bool FWindowsMisc::IsThisApplicationForeground()
 {
 	uint32 foregroundProcess;
 	::GetWindowThreadProcessId(GetForegroundWindow(), (::DWORD*)&foregroundProcess);
 	return (foregroundProcess == GetCurrentProcessId());
 }
 
-int32 WindowsMisc::GetAppIcon()
+int32 FWindowsMisc::GetAppIcon()
 {
 	return 0;
 }
 
-void WindowsMisc::PreventScreenSaver()
+void FWindowsMisc::PreventScreenSaver()
 {
 	INPUT input = { 0 };
 	input.type = INPUT_MOUSE;
@@ -44,19 +44,19 @@ void WindowsMisc::PreventScreenSaver()
 	SendInput(1, &input, sizeof(INPUT));
 }
 
-LinearColor WindowsMisc::GetScreenPixelColor(const Vector2D& inScreenPos, float inGamma)
+FLinearColor FWindowsMisc::GetScreenPixelColor(const FVector2D& inScreenPos, float inGamma)
 {
-	COLORREF pixelColorRef = GetPixel(GetDC(HWND_DESKTOP), inScreenPos.x, inScreenPos.y);
+	COLORREF pixelColorRef = GetPixel(GetDC(HWND_DESKTOP), static_cast<int>(inScreenPos.x), static_cast<int>(inScreenPos.y));
 
-	uint8 r = (pixelColorRef & 0xFF);
-	uint8 g = (pixelColorRef & 0xFF00) >> 8;
-	uint8 b = (pixelColorRef & 0xFF0000) >> 16;
+	uint8 r = static_cast<uint8>(pixelColorRef & 0xFF);
+	uint8 g = static_cast<uint8>((pixelColorRef & 0xFF00) >> 8);
+	uint8 b = static_cast<uint8>((pixelColorRef & 0xFF0000) >> 16);
 	uint8 a = 255;
 
-	return LinearColor(Color32(r, g, b, a));
+	return FLinearColor(FColor32(r, g, b, a));
 }
 
-bool WindowsMisc::GetWindowTitleMatchingText(const WIDECHAR* titleStartsWith, std::wstring& outTitle)
+bool FWindowsMisc::GetWindowTitleMatchingText(const WIDECHAR* titleStartsWith, std::wstring& outTitle)
 {
 	WIDECHAR buffer[8192];
 
@@ -88,7 +88,7 @@ bool WindowsMisc::GetWindowTitleMatchingText(const WIDECHAR* titleStartsWith, st
 	return wasFound;
 }
 
-float WindowsMisc::GetDPIScaleFactorAtPoint(float x, float y)
+float FWindowsMisc::GetDPIScaleFactorAtPoint(int32 x, int32 y)
 {
 	HDC context = GetDC(nullptr);
 	int32 dpi   = GetDeviceCaps(context, LOGPIXELSX);
@@ -99,11 +99,11 @@ float WindowsMisc::GetDPIScaleFactorAtPoint(float x, float y)
 	return scale;
 }
 
-void WindowsMisc::ClipboardCopy(const WIDECHAR* str)
+void FWindowsMisc::ClipboardCopy(const WIDECHAR* str)
 {
 	if (OpenClipboard(GetActiveWindow()) )
 	{
-		int32 strLen = _tcslen(str);
+		size_t strLen = _tcslen(str);
 		HGLOBAL globalMem = GlobalAlloc(GMEM_MOVEABLE, sizeof(WIDECHAR) * (strLen + 1));
 		WIDECHAR* data = (WIDECHAR*)GlobalLock(globalMem);
 		_tcscpy(data, str);
@@ -111,7 +111,7 @@ void WindowsMisc::ClipboardCopy(const WIDECHAR* str)
 	}
 }
 
-void WindowsMisc::ClipboardPaste(std::wstring& dest)
+void FWindowsMisc::ClipboardPaste(std::wstring& dest)
 {
 	if (OpenClipboard(GetActiveWindow()))
 	{

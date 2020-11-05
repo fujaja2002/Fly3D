@@ -6,22 +6,22 @@
 
 #include <string>
 
-static TLSFAllocator g_TLSFAllocator;
+static FTLSFAllocator g_TLSFAllocator;
 
-BaseAllocator* GetAllocator()
+FBaseAllocator* GetAllocator()
 {
 	return &g_TLSFAllocator;
 }
 
-TLSFAllocator::TLSFAllocator()
-	: BaseAllocator(true)
+FTLSFAllocator::FTLSFAllocator()
+	: FBaseAllocator(true)
 	, m_Tlsf(nullptr)
 	, m_PoolNum(0)
 {
 
 }
 
-TLSFAllocator::~TLSFAllocator()
+FTLSFAllocator::~FTLSFAllocator()
 {
 	if (m_Tlsf != nullptr)
 	{
@@ -38,45 +38,44 @@ TLSFAllocator::~TLSFAllocator()
 	m_PoolNum = 0;
 }
 
-int32 TLSFAllocator::GetPoolSize()
+int32 FTLSFAllocator::GetPoolSize()
 {
 	return TLSF_Pool_Size * m_PoolNum;
 }
 
-int32 TLSFAllocator::GetPoolCount()
+int32 FTLSFAllocator::GetPoolCount()
 {
 	return m_PoolNum;
 }
 
-void* TLSFAllocator::MallocBlock()
+void* FTLSFAllocator::MallocBlock()
 {
+	Assert(m_PoolNum < static_cast<int32>(TLSF_Pool_Count));
 	void* block = malloc(TLSF_Pool_Size);
-	Assert(block && m_PoolNum < TLSF_Pool_Count);
+	Assert(block);
 
-	m_Pools[m_PoolNum] = block;
-	m_PoolNum += 1;
-
+	m_Pools[m_PoolNum++]  = block;
 	m_TotalReservedBytes += TLSF_Pool_Size;
 
 	return block;
 }
 
-const MemorySalt* TLSFAllocator::GetMemorySalt(const uint8* p) const
+const FMemorySalt* FTLSFAllocator::GetMemorySalt(const uint8* p) const
 {
-	MemorySalt* salt = (MemorySalt*)(p - sizeof(MemorySalt));
+	FMemorySalt* salt = (FMemorySalt*)(p - sizeof(FMemorySalt));
 	return salt->owner == this ? salt : nullptr;
 }
 
-uint8* TLSFAllocator::Allocate(uint32 reqSize, int32 align, AllocatorType type, const char* file, int32 line)
+uint8* FTLSFAllocator::Allocate(uint32 reqSize, int32 align, EAllocatorType type, const char* file, int32 line)
 {
-	Assert(reqSize < TLSF_Pool_Size - sizeof(MemorySalt));
+	Assert(reqSize < TLSF_Pool_Size - sizeof(FMemorySalt));
 	
 	if (m_Tlsf == nullptr)
 	{
 		m_Tlsf = tlsf_create_with_pool(MallocBlock(), TLSF_Pool_Size);
 	}
 
-	uint32 realSize = AlignUp(reqSize + sizeof(MemorySalt), align);
+	size_t realSize = AlignUp(reqSize + sizeof(FMemorySalt), align);
 	void* mem = tlsf_malloc(m_Tlsf, realSize);
 
 	if (!mem)
@@ -85,23 +84,23 @@ uint8* TLSFAllocator::Allocate(uint32 reqSize, int32 align, AllocatorType type, 
 		mem = tlsf_malloc(m_Tlsf, realSize);
 	}
 
-	MemorySalt* salt = (MemorySalt*)mem;
-	salt->Fill(realSize, type, this, file, line);
+	FMemorySalt* salt = (FMemorySalt*)mem;
+	salt->Fill(static_cast<uint32>(realSize), type, this, file, line);
 
 	m_NumAllocations      += 1;
-	m_TotalAllocatedBytes += realSize;
-	m_PeakAllocatedBytes  += realSize;
+	m_TotalAllocatedBytes += static_cast<uint32>(realSize);
+	m_PeakAllocatedBytes  += static_cast<uint32>(realSize);
 
 #if ENABLE_MEM_PROFILER
 	GetMemoryProfiler()->RegisterAllocation(salt);
 #endif
 
-	return (uint8*)mem + sizeof(MemorySalt);
+	return (uint8*)mem + sizeof(FMemorySalt);
 }
 
-uint8* TLSFAllocator::Reallocate(uint8* p, uint32 reqSize, int32 align, AllocatorType type, const char* file, int32 line)
+uint8* FTLSFAllocator::Reallocate(uint8* p, uint32 reqSize, int32 align, EAllocatorType type, const char* file, int32 line)
 {
-	const MemorySalt* temp = GetMemorySalt(p);
+	const FMemorySalt* temp = GetMemorySalt(p);
 	Assert(temp);
 
 #if ENABLE_MEM_PROFILER
@@ -111,7 +110,7 @@ uint8* TLSFAllocator::Reallocate(uint8* p, uint32 reqSize, int32 align, Allocato
 	m_TotalAllocatedBytes -= temp->size;
 	m_PeakAllocatedBytes  -= temp->size;
 
-	uint32 realSize = AlignUp(reqSize + sizeof(MemorySalt), align);
+	size_t realSize = AlignUp(reqSize + sizeof(FMemorySalt), align);
 	void* mem = tlsf_realloc(m_Tlsf, (void*)temp, realSize);
 	if (!mem)
 	{
@@ -119,8 +118,8 @@ uint8* TLSFAllocator::Reallocate(uint8* p, uint32 reqSize, int32 align, Allocato
 		mem = tlsf_realloc(m_Tlsf, (void*)temp, realSize);
 	}
 
-	MemorySalt* salt = (MemorySalt*)mem;
-	salt->Fill(realSize, type, this, file, line);
+	FMemorySalt* salt = (FMemorySalt*)mem;
+	salt->Fill(static_cast<uint32>(realSize), type, this, file, line);
 
 	m_TotalAllocatedBytes += salt->size;
 	m_PeakAllocatedBytes  += salt->size;
@@ -132,9 +131,11 @@ uint8* TLSFAllocator::Reallocate(uint8* p, uint32 reqSize, int32 align, Allocato
 	return (uint8*)mem;
 }
 
-bool TLSFAllocator::Deallocate(uint8* p)
+bool FTLSFAllocator::Deallocate(uint8* p)
 {
-	const MemorySalt* salt = GetMemorySalt(p);
+	const FMemorySalt* salt = GetMemorySalt(p);
+	Assert(salt);
+
 	if (salt->owner != this)
 	{
 		return false;
@@ -151,8 +152,13 @@ bool TLSFAllocator::Deallocate(uint8* p)
 	return true;
 }
 
-bool TLSFAllocator::Contains(const uint8* p) const
+bool FTLSFAllocator::Contains(const uint8* p) const
 {
-	const MemorySalt* salt = GetMemorySalt(p);
+	const FMemorySalt* salt = GetMemorySalt(p);
+	if (!salt)
+	{
+		return false;
+	}
+
 	return salt->owner == this;
 }

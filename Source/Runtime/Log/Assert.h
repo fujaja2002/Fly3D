@@ -11,5 +11,5 @@
 	#define ASSERT_IMP(test, msg)
 #endif
 
-#define Assert(test)			ASSERT_IMP(test, "Assertion failed on expression: '" #test "'")
-#define AssertMsg(test, msg)	ASSERT_IMP(test, msg)
+#define Assert(test)			ASSERT_IMP((test), "Assertion failed on expression: '" #test "'")
+#define AssertMsg(test, msg)	ASSERT_IMP((test), msg)

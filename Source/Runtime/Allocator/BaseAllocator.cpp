@@ -1,6 +1,6 @@
 ﻿#include "Runtime/Allocator/BaseAllocator.h"
 
-BaseAllocator::BaseAllocator(bool threadSafe)
+FBaseAllocator::FBaseAllocator(bool threadSafe)
 	: m_NumAllocations(0)
 	, m_TotalAllocatedBytes(0)
 	, m_TotalReservedBytes(0)
@@ -10,12 +10,12 @@ BaseAllocator::BaseAllocator(bool threadSafe)
 
 }
 
-BaseAllocator::~BaseAllocator()
+FBaseAllocator::~FBaseAllocator()
 {
 
 }
 
-bool BaseAllocator::TryDeallocate(uint8* p)
+bool FBaseAllocator::TryDeallocate(uint8* p)
 {
 	if (!Contains(p))
 	{
