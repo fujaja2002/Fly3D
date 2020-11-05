@@ -36,6 +36,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	SetupDebugConsole();
 #endif
 
+	TFunction<float(int32)> f0 = [](int32 num) -> float {
+		return 1.0f;
+	};
+
+	TFunctionRef<int32(const float abc)> f1 = [](const float abc) -> int32 {
+		return 2;
+	};
+
+	TUniqueFunction<void()> f2 = []() -> void {
+		printf("TUniqueFunction\n");
+	};
+
+	printf("value=%f\n", f0(1));
+	printf("value=%d\n", f1(1));
+	f2();
+
 	std::shared_ptr<FWindowDefinition> def = std::make_shared<FWindowDefinition>();
 	FitWindowSize(0.8f, 0.8f, def);
 	
