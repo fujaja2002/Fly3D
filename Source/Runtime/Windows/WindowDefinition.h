@@ -55,55 +55,55 @@ struct FWindowSizeLimits
 
 public:
 
-	FWindowSizeLimits& SetMinWidth(float width)
+	FWindowSizeLimits& SetMinWidth(int32 width)
 	{
 		m_MinWidth = width;
 		return *this;
 	}
 
-	float GetMinWidth() const 
+	int32 GetMinWidth() const 
 	{ 
 		return m_MinWidth;
 	}
 
-	FWindowSizeLimits& SetMinHeight(float height)
+	FWindowSizeLimits& SetMinHeight(int32 height)
 	{ 
 		m_MinHeight = height; 
 		return *this; 
 	}
 
-	float GetMinHeight() const 
+	int32 GetMinHeight() const 
 	{ 
 		return m_MinHeight; 
 	}
 
-	FWindowSizeLimits& SetMaxWidth(float width)
+	FWindowSizeLimits& SetMaxWidth(int32 width)
 	{ 
 		m_MaxWidth = width; 
 		return *this; 
 	}
 
-	float GetMaxWidth() const 
+	int32 GetMaxWidth() const 
 	{ 
 		return m_MaxWidth; 
 	}
 
-	FWindowSizeLimits& SetMaxHeight(float height)
+	FWindowSizeLimits& SetMaxHeight(int32 height)
 	{ 
 		m_MaxHeight = height; 
 		return *this; 
 	}
 
-	const float GetMaxHeight() const 
+	const int32 GetMaxHeight() const 
 	{ 
 		return m_MaxHeight; 
 	}
 
 private:
-	float m_MinWidth;
-	float m_MinHeight;
-	float m_MaxWidth;
-	float m_MaxHeight;
+	int32 m_MinWidth;
+	int32 m_MinHeight;
+	int32 m_MaxWidth;
+	int32 m_MaxHeight;
 };
 
 struct FWindowDefinition

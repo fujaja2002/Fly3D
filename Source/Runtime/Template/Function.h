@@ -13,6 +13,7 @@
 #include "Runtime/Template/Invoke.h"
 #include "Runtime/Template/IsInvocable.h"
 #include "Runtime/Template/IsConstructible.h"
+#include "Runtime/Template/RemovePointer.h"
 #include "Runtime/Template/Template.h"
 
 template <typename FuncType>
@@ -185,7 +186,7 @@ namespace Fly3DPrivateFunction
 		{
 			void* This = this;
 			this->~IFunctionOwnedObjectOnHeap();
-			FMemory::Free(This);
+			GetAllocator()->Deallocate((uint8*)This);
 		}
 
 		~IFunctionOwnedObjectOnHeap() override
@@ -352,7 +353,7 @@ namespace Fly3DPrivateFunction
 
 			using OwnedType = TStorageOwnerTypeT<FunctorType, unique>;
 
-			void* newAlloc = GetAllocator()->Allocate(sizeof(OwnedType), alignof(OwnedType), AllocatorType::kMemTypeFunction, __FILE__, __LINE__);
+			void* newAlloc = GetAllocator()->Allocate(sizeof(OwnedType), alignof(OwnedType), EAllocatorType::kMemTypeFunction, __FILE__, __LINE__);
 			auto* newOwned = new (newAlloc) OwnedType(Forward<FunctorType>(inFunc));
 
 			heapAllocation = newAlloc;
@@ -366,7 +367,7 @@ namespace Fly3DPrivateFunction
 	{
 		TFunctionStorage<false>& storage = *(TFunctionStorage<false>*)inStorage;
 
-		void* newAlloc = GetAllocator()->Allocate(sizeof(TFunctionCopyableOwnedObject), alignof(TFunctionCopyableOwnedObject), AllocatorType::kMemTypeFunction, __FILE__, __LINE__);
+		void* newAlloc = GetAllocator()->Allocate(sizeof(TFunctionCopyableOwnedObject), alignof(TFunctionCopyableOwnedObject), EAllocatorType::kMemTypeFunction, __FILE__, __LINE__);
 		storage.heapAllocation = newAlloc;
 
 		auto* newOwned = new (newAlloc) TFunctionCopyableOwnedObject(this->obj);
