@@ -52,6 +52,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	printf("value=%d\n", f1(1));
 	f2();
 
+	struct MyStruct
+	{
+		float x;
+		float y;
+
+		MyStruct()
+		{
+			printf("MyStruct()");
+		}
+
+		~MyStruct()
+		{
+			printf("~MyStruct()");
+		}
+	};
+
+	MyStruct* mm = new(EAllocatorType::kMemTypeRegular, alignof(MyStruct), __FILE__, __LINE__) MyStruct;
+
+	mm->~MyStruct();
+
+	char* a = new(EAllocatorType::kMemTypeRegular, alignof(char[128]), __FILE__, __LINE__) char[128];
+
+
 	std::shared_ptr<FWindowDefinition> def = std::make_shared<FWindowDefinition>();
 	FitWindowSize(0.8f, 0.8f, def);
 	
