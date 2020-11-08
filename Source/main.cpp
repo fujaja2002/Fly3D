@@ -1,13 +1,12 @@
-#include "Runtime/Windows/WindowsWindow.h"
+#include "Runtime/Loop/EngineLoop.h"
 #include "Runtime/Windows/WindowsApplication.h"
-#include "Runtime/Windows/WindowsMisc.h"
-#include "Runtime/Math/Math.h"
-
-#include "Runtime/Template/Function.h"
+#include "Runtime/Core/Globals.h"
 
 #include <string>
 #include <stdio.h>
 #include <Windows.h>
+
+FEngineLoop GEngineLoop;
 
 void SetupDebugConsole()
 {
@@ -15,83 +14,45 @@ void SetupDebugConsole()
 	freopen("CONOUT$", "w", stdout);
 }
 
-void FitWindowSize(float widthBias, float heightBias, std::shared_ptr<FWindowDefinition>& def)
-{
-	int32 width  = -1;
-	int32 height = -1;
-	FWindowsMisc::GetDesktopResolution(width, height);
-
-	int32 realWidth  = FMath::TruncToInt(width  * widthBias);
-	int32 realHeight = FMath::TruncToInt(height * heightBias);
-
-	def->xDesiredPositionOnScreen = (width - realWidth) / 2;
-	def->yDesiredPositionOnScreen = (height - realHeight) / 2;
-	def->widthDesiredOnScreen  = realWidth;
-	def->heightDesiredOnScreen = realHeight;
-}
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
+int32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int32 iCmdShow)
 {
 #if FLY_DEBUG
 	SetupDebugConsole();
 #endif
 
-	TFunction<float(int32)> f0 = [](int32 num) -> float {
-		return 1.0f;
-	};
+	Globals::HInstance = hInstance;
 
-	TFunctionRef<int32(const float abc)> f1 = [](const float abc) -> int32 {
-		return 2;
-	};
-
-	TUniqueFunction<void()> f2 = []() -> void {
-		printf("TUniqueFunction\n");
-	};
-
-	printf("value=%f\n", f0(1));
-	printf("value=%d\n", f1(1));
-	f2();
-
-	struct MyStruct
+	struct EngineLoopCleanup
 	{
-		float x;
-		float y;
-
-		MyStruct()
+		~EngineLoopCleanup()
 		{
-			printf("MyStruct()");
+			Globals::IsRequestingExit = true;
+			GEngineLoop.PreExitApp();
+			GEngineLoop.Exit();
 		}
-
-		~MyStruct()
-		{
-			printf("~MyStruct()");
-		}
-	};
-
-	MyStruct* mm = new(EAllocatorType::kMemTypeRegular, alignof(MyStruct), __FILE__, __LINE__) MyStruct;
-
-	mm->~MyStruct();
-
-	char* a = new(EAllocatorType::kMemTypeRegular, alignof(char[128]), __FILE__, __LINE__) char[128];
-
-
-	std::shared_ptr<FWindowDefinition> def = std::make_shared<FWindowDefinition>();
-	FitWindowSize(0.8f, 0.8f, def);
+	} cleanupEngine;
 	
-	FWindowsApplication::CreateApplication(hInstance, NULL);
-	
-	WindowPtr window = GetApplication()->MakeWindow(def, nullptr, true);
-
-	RECT desktop;
-	const HWND hDesktop = GetDesktopWindow();
-	GetWindowRect(hDesktop, &desktop);
-
-	while (true)
+	int32 errorLevel = GEngineLoop.PreInit(iCmdShow, ::GetCommandLineW());
+	if (errorLevel != 0 || Globals::IsRequestingExit)
 	{
-		GetApplication()->PumpMessages(0.16f);
+		return errorLevel;
+	}
+	
+	errorLevel = GEngineLoop.Init();
+	errorLevel = GEngineLoop.PostInit();
+
+	GEngineLoop.PreInitRHI();
+	GEngineLoop.InitRHI();
+	GEngineLoop.PostInitRHI();
+
+	GEngineLoop.PreInitApp();
+	GEngineLoop.InitApp();
+	GEngineLoop.PostInitApp();
+
+	while (!Globals::IsRequestingExit)
+	{
+		GEngineLoop.Tick();
 	}
 
-	FWindowsApplication::DestroyApplication();
-
-    return 0;
+	return errorLevel;
 }

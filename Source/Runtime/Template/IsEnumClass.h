@@ -7,7 +7,7 @@ namespace Fly3DPrivateIsEnumClass
 	template <typename T>
 	struct TIsEnumConvertibleToInt
 	{
-		static char (&Resolve(int))[2];
+		static char (&Resolve(int32))[2];
 
 		static char Resolve(...);
 

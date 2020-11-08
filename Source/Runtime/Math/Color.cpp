@@ -111,10 +111,10 @@ FLinearColor::FLinearColor(float inR, float inG, float inB, float inA)
 
 FLinearColor::FLinearColor(const FColor32& inColor)
 {
-	r = static_cast<float>(sRGBToLinearTable[inColor.r]);
-	g = static_cast<float>(sRGBToLinearTable[inColor.g]);
-	b =	static_cast<float>(sRGBToLinearTable[inColor.b]);
-	a =	static_cast<float>(inColor.a) * OneOver255;
+	r = (float)(sRGBToLinearTable[inColor.r]);
+	g = (float)(sRGBToLinearTable[inColor.g]);
+	b =	(float)(sRGBToLinearTable[inColor.b]);
+	a =	(float)(inColor.a) * OneOver255;
 }
 
 FColor32::FColor32()

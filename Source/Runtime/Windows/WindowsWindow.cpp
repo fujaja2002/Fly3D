@@ -25,6 +25,8 @@ HWND FWindowsWindow::GetHWnd() const
 void FWindowsWindow::Initialize(const std::shared_ptr<FWindowDefinition>& inDefinition, HINSTANCE inHInstance, const std::shared_ptr<FWindowsWindow>& inParent, const bool showImmediately)
 {
 	m_Definition   = inDefinition;
+	m_RegionX      = -1;
+	m_RegionY      = -1;
 	m_RegionWidth  = -1;
 	m_RegionHeight = -1;
 
@@ -277,13 +279,17 @@ void FWindowsWindow::ReshapeWindow(int32 newX, int32 newY, int32 newWidth, int32
 	}
 
 	::SetWindowPos(m_HWnd, nullptr, windowX, windowY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE | ((m_WindowMode == EWindowMode::Fullscreen) ? SWP_NOSENDCHANGING : 0));
+
+	m_RegionX = newX;
+	m_RegionY = newY;
+	m_RegionWidth  = newWidth;
+	m_RegionHeight = newHeight;
 }
 
 bool FWindowsWindow::GetFullScreenInfo(int32& x, int32& y, int32& width, int32& height) const
 {
-	bool trueFullscreen = m_WindowMode == EWindowMode::Fullscreen;
-
-	HMONITOR monitor = MonitorFromWindow(m_HWnd, trueFullscreen ? MONITOR_DEFAULTTOPRIMARY : MONITOR_DEFAULTTONEAREST);
+	bool fullscreen  = m_WindowMode == EWindowMode::Fullscreen;
+	HMONITOR monitor = MonitorFromWindow(m_HWnd, fullscreen ? MONITOR_DEFAULTTOPRIMARY : MONITOR_DEFAULTTONEAREST);
 
 	MONITORINFO monitorInfo;
 	monitorInfo.cbSize = sizeof(MONITORINFO);
@@ -411,7 +417,7 @@ void FWindowsWindow::Show()
 			}
 		}
 
-		int showWindowCommand = shouldActivate ? SW_SHOW : SW_SHOWNOACTIVATE;
+		int32 showWindowCommand = shouldActivate ? SW_SHOW : SW_SHOWNOACTIVATE;
 		if (m_IsFirstTimeVisible)
 		{
 			m_IsFirstTimeVisible = false;
@@ -683,6 +689,8 @@ ULONG __stdcall FWindowsWindow::Release(void)
 FWindowsWindow::FWindowsWindow()
 	: m_Definition(nullptr)
 	, m_HWnd(NULL)
+	, m_RegionX(-1)
+	, m_RegionY(-1)
 	, m_RegionWidth(-1)
 	, m_RegionHeight(-1)
 	, m_WindowMode(EWindowMode::Windowed)

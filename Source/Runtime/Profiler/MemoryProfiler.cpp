@@ -40,7 +40,7 @@ const FMemorySalt* FMemoryProfiler::GetMemorySalt(const uint8* ptr)
 
 uint32 FMemoryProfiler::GetMemoryHeaderSize()
 {
-	return static_cast<uint32>(m_Salts.size()) * MemorySaltSize();
+	return (uint32)(m_Salts.size()) * MemorySaltSize();
 }
 
 uint32 FMemoryProfiler::GetAllocatedMemorySize()

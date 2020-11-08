@@ -8,7 +8,7 @@
 
 class FBaseAllocator : public Noncopyable
 {
-protected:
+public:
 
 	enum 
 	{ 
@@ -21,15 +21,15 @@ public:
 
 	virtual ~FBaseAllocator();
 
-	virtual uint8* Allocate(uint32 size, int32 align, EAllocatorType type, const char* file, int32 line) = 0;
+	virtual void* Allocate(uint32 size, uint32 align, EAllocatorType type, const char* file, int32 line) = 0;
 
-	virtual uint8* Reallocate(uint8* p, uint32 size, int32 align, EAllocatorType type, const char* file, int32 line) = 0;
+	virtual void* Reallocate(void* p, uint32 size, uint32 align, EAllocatorType type, const char* file, int32 line) = 0;
 
-	virtual bool Deallocate(uint8* p) = 0;
+	virtual bool Deallocate(const void* p) = 0;
 
-	virtual bool Contains(const uint8* p) const = 0;
+	virtual bool Contains(const void* p) const = 0;
 
-	virtual bool TryDeallocate(uint8* p);
+	virtual bool TryDeallocate(const void* p);
 
 	virtual uint32 GetAllocatedMemorySize() const 
 	{ 
