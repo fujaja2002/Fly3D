@@ -15,7 +15,7 @@ FBaseAllocator::~FBaseAllocator()
 
 }
 
-bool FBaseAllocator::TryDeallocate(uint8* p)
+bool FBaseAllocator::TryDeallocate(const void* p)
 {
 	if (!Contains(p))
 	{

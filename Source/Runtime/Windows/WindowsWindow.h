@@ -7,8 +7,14 @@
 #include <Windows.h>
 #include <memory>
 
+class FWindowsApplication;
+
+typedef std::shared_ptr<FWindowDefinition> WindowDefinitionPtr;
+
 class FWindowsWindow : public Noncopyable, public IDropTarget
 {
+	friend class FWindowsApplication;
+
 public:
 
 	static const WIDECHAR AppWindowClass[];
@@ -105,6 +111,19 @@ public:
 		m_DPIScaleFactor = Value;
 	}
 
+	virtual const WindowDefinitionPtr& GetDefinition() const
+	{
+		return m_Definition;
+	}
+
+protected:
+
+	virtual void OnWindowMode(int32 x, int32 y)
+	{
+		m_RegionX = x;
+		m_RegionY = y;
+	}
+
 public:
 
 	virtual HRESULT __stdcall QueryInterface(REFIID iid, void ** ppvObject) override;
@@ -131,12 +150,12 @@ private:
 
 private:
 
-	typedef std::shared_ptr<FWindowDefinition> WindowDefinitionPtr;
-
 	WindowDefinitionPtr m_Definition;
 
 	HWND				m_HWnd;
 
+	int32				m_RegionX;
+	int32				m_RegionY;
 	int32				m_RegionWidth;
 	int32				m_RegionHeight;
 

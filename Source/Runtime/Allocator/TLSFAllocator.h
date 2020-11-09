@@ -21,15 +21,15 @@ public:
 
 	int32 GetPoolCount();
 
-	virtual uint8* Allocate(uint32 size, int32 align, EAllocatorType type, const char* file, int32 line) override;
+	virtual void* Allocate(uint32 size, uint32 align, EAllocatorType type, const char* file, int32 line) override;
 
-	virtual uint8* Reallocate(uint8* p, uint32 size, int32 align, EAllocatorType type, const char* file, int32 line) override;
+	virtual void* Reallocate(void* p, uint32 size, uint32 align, EAllocatorType type, const char* file, int32 line) override;
 
-	virtual bool Deallocate(uint8* p) override;
+	virtual bool Deallocate(const void* p) override;
 
-	virtual bool Contains(const uint8* p) const override;
+	virtual bool Contains(const void* p) const override;
 
-	const FMemorySalt* GetMemorySalt(const uint8* p) const;
+	const FMemorySalt* GetMemorySalt(const void* p) const;
 
 private:
 

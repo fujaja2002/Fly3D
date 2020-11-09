@@ -46,11 +46,11 @@ void FWindowsMisc::PreventScreenSaver()
 
 FLinearColor FWindowsMisc::GetScreenPixelColor(const FVector2D& inScreenPos, float inGamma)
 {
-	COLORREF pixelColorRef = GetPixel(GetDC(HWND_DESKTOP), static_cast<int>(inScreenPos.x), static_cast<int>(inScreenPos.y));
+	COLORREF pixelColorRef = GetPixel(GetDC(HWND_DESKTOP), (int32)(inScreenPos.x), (int32)(inScreenPos.y));
 
-	uint8 r = static_cast<uint8>(pixelColorRef & 0xFF);
-	uint8 g = static_cast<uint8>((pixelColorRef & 0xFF00) >> 8);
-	uint8 b = static_cast<uint8>((pixelColorRef & 0xFF0000) >> 16);
+	uint8 r = (uint8)(pixelColorRef & 0xFF);
+	uint8 g = (uint8)((pixelColorRef & 0xFF00) >> 8);
+	uint8 b = (uint8)((pixelColorRef & 0xFF0000) >> 16);
 	uint8 a = 255;
 
 	return FLinearColor(FColor32(r, g, b, a));

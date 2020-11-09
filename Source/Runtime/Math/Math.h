@@ -20,6 +20,16 @@ struct FMath
 		return (float)TruncToInt(F);
 	}
 
+	static int32 FloorToInt(float F)
+	{
+		return TruncToInt(floorf(F));
+	}
+
+	static int32 RoundToInt(float F)
+	{
+		return FloorToInt(F + 0.5f);
+	}
+
 	template<class T> 
 	static constexpr T Min(const T a, const T b)
 	{

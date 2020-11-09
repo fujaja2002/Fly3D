@@ -16,6 +16,8 @@ enum class EWindowType
 {
 	/** general-purpose window */
 	Normal,
+	/** game window */
+	GameWindow,
 	/** popup menu */
 	Menu,
 	/** tooltip */
