@@ -71,7 +71,7 @@ template <typename T>
 T&& DeclVal();
 
 template <typename T>
-inline typename TEnableIf<TUseBitwiseSwap<T>::Value>::Type Swap(T& a, T& b)
+FORCE_INLINE typename TEnableIf<TUseBitwiseSwap<T>::Value>::Type Swap(T& a, T& b)
 {
 	if (&a != &b)
 	{
@@ -83,7 +83,7 @@ inline typename TEnableIf<TUseBitwiseSwap<T>::Value>::Type Swap(T& a, T& b)
 }
 
 template <typename T>
-inline typename TEnableIf<!TUseBitwiseSwap<T>::Value>::Type Swap(T& a, T& b)
+FORCE_INLINE typename TEnableIf<!TUseBitwiseSwap<T>::Value>::Type Swap(T& a, T& b)
 {
 	T temp = MoveTemp(a);
 	a = MoveTemp(b);
@@ -91,7 +91,19 @@ inline typename TEnableIf<!TUseBitwiseSwap<T>::Value>::Type Swap(T& a, T& b)
 }
 
 template <typename T>
-inline void Exchange(T& a, T& b)
+FORCE_INLINE void Exchange(T& a, T& b)
 {
 	Swap(a, b);
+}
+
+template <typename T>
+struct TIdentity
+{
+	typedef T Type;
+};
+
+template <typename T>
+FORCE_INLINE T ImplicitConv(typename TIdentity<T>::Type obj)
+{
+	return obj;
 }

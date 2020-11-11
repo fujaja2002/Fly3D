@@ -2,6 +2,8 @@
 #include "Runtime/Windows/WindowsApplication.h"
 #include "Runtime/Core/Globals.h"
 
+#include "Runtime/Template/SharedPointer.h"
+
 #include <string>
 #include <stdio.h>
 #include <Windows.h>
@@ -21,6 +23,28 @@ int32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLin
 #endif
 
 	Globals::HInstance = hInstance;
+
+	struct MyStruct
+	{
+		float x;
+		float y;
+
+		MyStruct(float xx, float yy)
+		{
+			LOGE("init\n");
+		}
+
+		~MyStruct()
+		{
+			LOGE("delete\n");
+		}
+	};
+
+	{
+		TSharedPtr<MyStruct> m = MakeShared<MyStruct>(1.0f, 2.0f);
+
+		TSharedPtr<MyStruct> a(new MyStruct(1.2f, 2.0f));
+	}
 
 	struct EngineLoopCleanup
 	{
