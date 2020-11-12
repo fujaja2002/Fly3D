@@ -28,12 +28,16 @@ ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
 
 include_directories(
 	Source/
+	ThirdParty/lua
 )
 
 add_subdirectory(Source)
 
+add_subdirectory(ThirdParty/lua)
+
 set(ALL_LIBS
 	${ALL_LIBS}
+	lua
 	FlyCore
 )
 
