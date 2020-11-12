@@ -8,6 +8,13 @@
 #include <stdio.h>
 #include <Windows.h>
 
+extern "C"
+{
+	#include "lua.h"
+	#include "lualib.h"
+	#include "lauxlib.h"
+}
+
 FEngineLoop GEngineLoop;
 
 void SetupDebugConsole()
@@ -24,27 +31,12 @@ int32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLin
 
 	Globals::HInstance = hInstance;
 
-	struct MyStruct
-	{
-		float x;
-		float y;
-
-		MyStruct(float xx, float yy)
-		{
-			LOGE("init\n");
-		}
-
-		~MyStruct()
-		{
-			LOGE("delete\n");
-		}
-	};
-
-	{
-		TSharedPtr<MyStruct> m = MakeShared<MyStruct>(1.0f, 2.0f);
-
-		TSharedPtr<MyStruct> a(new MyStruct(1.2f, 2.0f));
-	}
+	lua_State* luaState = luaL_newstate();
+	lua_pushstring(luaState, "hello lua");   
+	lua_pushnumber(luaState, 20);
+	LOGI("Lua get str : %s\n", lua_tostring(luaState, 1));
+	LOGI("Lua get int : %xd\n", lua_tonumber(luaState, 2));
+	lua_close(luaState);
 
 	struct EngineLoopCleanup
 	{
