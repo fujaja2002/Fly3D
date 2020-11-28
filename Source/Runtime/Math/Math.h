@@ -2,6 +2,8 @@
 
 #include "Runtime/Platform/Platform.h"
 
+#include <intrin0.h>
+
 template<typename T>
 FORCE_INLINE bool IsPowerOfTwo(T value)
 {
@@ -41,4 +43,41 @@ struct FMath
 	{
 		return (a >= b) ? a : b;
 	}
+
+	static uint32 CountLeadingZeros(uint32 value)
+	{
+		unsigned long log2;
+
+		if (_BitScanReverse(&log2, value) != 0)
+		{
+			return 31 - log2;
+		}
+
+		return 32;
+	}
+
+	static uint32 CountTrailingZeros(uint32 value)
+	{
+		if (value == 0)
+		{
+			return 32;
+		}
+
+		unsigned long bitIndex;
+		_BitScanForward(&bitIndex, value);
+
+		return bitIndex;
+	}
+
+	static uint32 CeilLogTwo(uint32 arg)
+	{
+		int32 bitmask = ((int32)(CountLeadingZeros(arg) << 26)) >> 31;
+		return (32 - CountLeadingZeros(arg - 1)) & (~bitmask);
+	}
+
+	static uint32 RoundUpToPowerOfTwo(uint32 arg)
+	{
+		return 1 << CeilLogTwo(arg);
+	}
+
 };

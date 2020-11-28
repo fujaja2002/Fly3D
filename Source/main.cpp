@@ -1,19 +1,12 @@
 #include "Runtime/Loop/EngineLoop.h"
 #include "Runtime/Windows/WindowsApplication.h"
 #include "Runtime/Core/Globals.h"
-
 #include "Runtime/Template/SharedPointer.h"
+#include "Runtime/Core/Containers/Array.h"
 
 #include <string>
 #include <stdio.h>
 #include <Windows.h>
-
-extern "C"
-{
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
-}
 
 FEngineLoop GEngineLoop;
 
@@ -31,12 +24,34 @@ int32 WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLin
 
 	Globals::HInstance = hInstance;
 
-	lua_State* luaState = luaL_newstate();
-	lua_pushstring(luaState, "hello lua");   
-	lua_pushnumber(luaState, 20);
-	LOGI("Lua get str : %s\n", lua_tostring(luaState, 1));
-	LOGI("Lua get int : %xd\n", lua_tonumber(luaState, 2));
-	lua_close(luaState);
+	struct MyStruct
+	{
+		float x;
+		float y;
+
+		MyStruct()
+			: x(0)
+			, y(0)
+		{
+
+		}
+
+		MyStruct(float inX, float inY)
+			: x(inX)
+			, y(inY)
+		{
+
+		}
+	};
+
+	TArray<MyStruct> arr;
+	arr.AddUninitialized(10);
+	arr.Emplace(1.0f, 2.0f);
+
+	for (int32 i = 0; i < arr.Num(); ++i)
+	{
+		LOGI("(x=%f,y=%f)\n", arr[i].x, arr[i].y);
+	}
 
 	struct EngineLoopCleanup
 	{
